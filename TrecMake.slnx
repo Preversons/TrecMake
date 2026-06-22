@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="CheckerParser/CheckerParser.vcxproj" Id="38eab54d-b7c3-48b4-8da4-560b8c4da2ca" />
+  <Project Path="main/main.vcxproj" Id="e2a20bfc-a9dc-434e-a899-5e405bcc8319" />
+</Solution>

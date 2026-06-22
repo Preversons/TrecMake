@@ -1,0 +1,6 @@
+array as bool break case char const continue 
+else enum error export false float for from 
+func if impl import in int let list map 
+match mut new none ok option own result 
+return self set shared some str struct true 
+type uint var where while
