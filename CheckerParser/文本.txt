@@ -1,4 +1,0 @@
-D:\my folder\TrecMake\x64\Debug>CheckerParser C:\Users\HIAPAD\Desktop\deepseek_api.txt
-|"Hello|
-|->", World|
-请按任意键继续. . .

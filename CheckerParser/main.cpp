@@ -1,13 +1,17 @@
 #include <iostream>
+#include <iomanip>
 #include <string>
-#include <stdexcept>
+#include <Windows.h>
 #include "checkerScanner.h"
 #include "overloads.h"
+#include "macros.h"
 using namespace std;
 using namespace trecmake::checker;
 
 int main(int argc, char* argv[]) {
-	bool isDebugging; // 是否开启调试模式
+
+	// 是否开启调试模式
+	bool isDebugging;
 
 	isDebugging = false;
 
@@ -16,16 +20,27 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
+	enable_colors; // 开启颜色输出支持
+
+	// 配置文件的文件名
 	string configFilePath = argv[1];
 
-	// 测试字符串
-	string __TestString = "\"Hello\" ->\", World\";"; // "Hello" ->", World";
+	Scanner input(configFilePath);
 
-	Scanner scr(configFilePath);
-	auto tokens = scr.tokenize(__TestString, 0).results;
+	auto tokens = input.tokenize().results;
+	vector<ScannerExceptions::ScannerProcessingException*> errors = input.tokenize().errors;
+	
+	cout << "tokens = " << endl;
+	for (int i = 0;i < tokens.size();i++) {
+		for (int j = 0;j < tokens[i].size();j++) {
+			cout << setw(13) << left << (string("|") + tokens[i][j] + string("| "));
+		}
+		cout << endl;
+	}
 
-	for (const auto& token : tokens) {
-		cout << "|" << token << "|" << endl;
+	cout << "errors = " << endl;
+	for (int i = 0;i < errors.size();i++) {
+		cout << (errors[i])->what() << endl << endl;
 	}
 
 

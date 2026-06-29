@@ -37,7 +37,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="文本.txt">
+    <Text Include="..\x64\Debug\syntax.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>

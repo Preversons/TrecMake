@@ -1,3 +1,0 @@
-"import"        -> package(import);
-package(import) -> module(import);
-module(import)  -> ";";

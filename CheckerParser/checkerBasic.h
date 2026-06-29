@@ -13,6 +13,43 @@ using namespace std;
 trecmake_begin
 
 namespace checker {
+
+	// 提供多个语法解析相关工具
+	namespace utils {
+
+		// 判断是否是合法的标识符字符
+		bool isLegalIdentifierChar(char c) {
+			return
+				(c >= 'a' && c <= 'z') ||
+				(c >= 'A' && c <= 'Z') ||
+				(c >= '0' && c <= '9') ||
+				(c == '_');
+		}
+
+		// 判断是否是合法的标识符首字符
+		bool isLegalIdentifierStartChar(char c) {
+			return
+				(c >= 'a' && c <= 'z') ||
+				(c >= 'A' && c <= 'Z') ||
+				(c == '_');
+		}
+
+		// 判断是否是合法的标识符
+		bool isLegalIdentifier(const string& s) {
+			if (s.empty()) return false;
+			if (!isLegalIdentifierStartChar(s[0])) return false;
+			for (char c : s) {
+				if (!isLegalIdentifierChar(c)) return false;
+			}
+			return true;
+		}
+		bool isLegalIdentifier(const char* s) {
+			return isLegalIdentifier(string(s));
+		}
+
+	}
+
+	// 匹配器
 	namespace matcher { // 匹配器
 
 		class Matcher { // 匹配器基类
@@ -84,6 +121,7 @@ namespace checker {
 		}
 	}
 
+	// 语法树
 	namespace syntaxTree { // 语法树的节点定义以及函数
 
 		struct node { // 语法树节点
