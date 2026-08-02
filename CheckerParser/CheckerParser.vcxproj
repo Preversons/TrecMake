@@ -144,6 +144,8 @@
   <ItemGroup>
     <ClInclude Include="checkerBasic.h" />
     <ClInclude Include="checkerExceptions.h" />
+    <ClInclude Include="checkerMatcher.h" />
+    <ClInclude Include="checkerParser.h" />
     <ClInclude Include="checkerScanner.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="overloads.h" />

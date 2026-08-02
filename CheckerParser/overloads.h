@@ -9,7 +9,7 @@ template<typename T>
 ostream& operator<<(ostream& os, const vector<T>& vec) {
 	os << "[\n";
 	for (int i = 0; i < vec.size(); i++) {
-		os << "\t\"" << vec[i] << "\"";
+		os << "\t" << vec[i];
 		if (i != vec.size() - 1)os << ",\n";
 	}
 	os << "]";

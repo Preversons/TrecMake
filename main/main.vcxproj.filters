@@ -15,24 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stream.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="macros.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="excepts.h">
+    <ClInclude Include="overloads.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="resour\keywords.txt">
-      <Filter>资源文件</Filter>
-    </Text>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

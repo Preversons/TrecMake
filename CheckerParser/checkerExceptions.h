@@ -15,7 +15,7 @@ namespace checker {
 	// 一些扫描器可能产生的异常及其辅助工具
 	namespace ScannerExceptions {
 
-		// 扫描器相关的异常类
+		// 扫描器异常类基类
 		class ScannerProcessingException : public exception {
 		protected:
 
@@ -245,6 +245,115 @@ namespace checker {
 		};
 	
 	}
+
+
+	// 一些解析器可能产生的异常及其辅助工具
+	namespace ParserExceptions {
+
+		// 解析器异常类基类
+		class ParserProcessingException : exception {
+		protected:
+
+			// 错误信息
+			string message;
+
+			// 缓存后的信息
+			mutable string cachedMessage;
+
+		public:
+			ParserProcessingException(const string& message) : message(message) {}
+			ParserProcessingException(const char* message) : message(message) {}
+			ParserProcessingException(const ParserProcessingException& willCopy) : message(willCopy.what()) {}
+			ParserProcessingException() : message("\0") {}
+
+			const char* what() const noexcept override {
+				if (message.empty()) {
+					return "";
+				}
+
+				// 处理消息（添加 \0）
+				if (message.back() != '\0') {
+					cachedMessage = message + '\0';
+					return cachedMessage.c_str();
+				}
+				else {
+					return message.c_str();
+				}
+			}
+
+			virtual ~ParserProcessingException() = default;
+
+		};
+
+		// 结构非法异常
+		class ParserStructureIllegalException : public ParserProcessingException {
+		private:
+
+			// 缺少的结构
+			string missingStruct;
+
+			// [内部] 创建错误信息
+			void __create() {
+				string _message = "\033[91mParserStructureIllegalException:\033[0m\n";
+				_message += "\tLack of the " + missingStruct + " structure.";
+
+				this->message = _message.c_str();
+
+			}
+
+		public:
+			ParserStructureIllegalException(const string& missingStruct) : missingStruct(missingStruct) {
+				__create();
+			}
+			ParserStructureIllegalException(const char* missingStruct) : missingStruct(missingStruct) {
+				__create();
+			}
+			ParserStructureIllegalException(const ParserStructureIllegalException& willCopy)
+				: missingStruct(willCopy.what()) {
+				__create();
+			}
+			
+			using ParserProcessingException::what;
+
+		};
+
+		// token非法异常
+		class ParserTokenIllegalException : public ParserProcessingException {
+		private:
+			// 错误的token
+			string illegalToken;
+
+			// 应该的类型
+			string rightClass;
+
+			// [内部] 错误信息创建函数
+			void __create() {
+				string _message = "\033[91mParserTokenIllegalException:\033[0m\n";
+				_message += "\tThe Token: \"" + illegalToken + "\" is illegal.\n";
+				_message += "\tIt should be a " + rightClass + ".";
+
+				this->message = _message.c_str();
+			}
+
+		public:
+
+			ParserTokenIllegalException(const string& illegalToken, const string& rightClass = "<Unknown>") :
+				illegalToken(illegalToken),
+				rightClass(rightClass) {
+				__create();
+			}
+			ParserTokenIllegalException(const ParserTokenIllegalException& willCopy) :
+				ParserProcessingException(willCopy),  // 调用基类拷贝构造
+				illegalToken(willCopy.illegalToken),
+				rightClass(willCopy.rightClass) {
+				__create();
+			}
+
+			using ParserProcessingException::what;
+
+		};
+	}
+
 }
 
 trecmake_end

@@ -35,6 +35,12 @@
     <ClInclude Include="checkerExceptions.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="checkerParser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="checkerMatcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\x64\Debug\syntax.txt">

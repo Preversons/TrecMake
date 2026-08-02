@@ -3,6 +3,7 @@
 #include <string>
 #include <Windows.h>
 #include "checkerScanner.h"
+#include "checkerParser.h"
 #include "overloads.h"
 #include "macros.h"
 using namespace std;
@@ -13,7 +14,7 @@ int main(int argc, char* argv[]) {
 	// 是否开启调试模式
 	bool isDebugging;
 
-	isDebugging = false;
+	isDebugging = true;
 
 	if (argc < 2 && !isDebugging) {
 		cerr << "Usage: " << argv[0] << " <configFilePath>" << endl;
@@ -23,7 +24,7 @@ int main(int argc, char* argv[]) {
 	enable_colors; // 开启颜色输出支持
 
 	// 配置文件的文件名
-	string configFilePath = argv[1];
+	string configFilePath = "D:\\my folder\\TrecMake\\x64\\Debug\\syntax.txt";
 
 	Scanner input(configFilePath);
 
@@ -43,8 +44,16 @@ int main(int argc, char* argv[]) {
 		cout << (errors[i])->what() << endl << endl;
 	}
 
+	Parser parser(tokens);
+	auto result = parser.init();
 
+	auto parseErrors = result.errors;
+	cout << "errors = " << endl;
+	for (int i = 0;i < parseErrors.size();i++) {
+		cout << (parseErrors[i])->what() << endl << endl;
+	}
+
+	
 	system("pause");
-
 	return 0;
 }

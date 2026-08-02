@@ -1,8 +1,7 @@
-#ifndef SCANNER_H
-#define SCANNER_H
+#ifndef CHECKERSCANNER_H
+#define CHECKERSCANNER_H
 
 #include <fstream>
-#include <variant>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -288,7 +287,14 @@ namespace checker {
 
 					} // end READ
 
-					tokens.push_back(currentToken);
+					// 此时的currentToken形如：(s)
+					// 应存入 "(" s ")" 三个token
+
+					tokens.push_back("(");
+
+					tokens.push_back(currentToken.substr(1, currentToken.size() - 2));
+					
+					tokens.push_back(")");
 
 					currentToken = "";
 
@@ -418,52 +424,10 @@ namespace checker {
 				else if (tokens[i]=="[") {}
 				else if (tokens[i] == "]") {}
 				else if (tokens[i] == ",") {}
+				else if (tokens[i] == "(") {}
+				else if (tokens[i] == ")") {}
 				
-				// 可能是由括号包裹的
-				else if (tokens[i][0] == '(') {
-
-					// 括号进入的相对层级
-					int parentheseLeval = 0;
-
-					// 括号层级是否合法
-					bool parentheseIsLegal = false;
-
-					// 判断括号层级是否合法
-					for (int j = 0;j < tokens[i].size();j++) {
-						if (tokens[i][j] == '(')parentheseLeval++;
-						if (tokens[i][j] == ')') {
-							parentheseLeval--;
-							if (parentheseLeval == 0) {
-								parentheseIsLegal = true;
-								break;
-							}
-						}
-					}
-
-
-					// 如果括号层级不合法，一般是函数自身问题
-					if (!parentheseIsLegal) {
-						cout << "\033[91mparentheseIllegal: " << tokens[i] << "\033[0m" << endl;
-						errors.push_back(NULL);
-						errors.back() = new ScannerExceptions::ScannerTokenIllegalException(tokens[i]);
-					}
-
-					// 并非以')'结尾，应该也是函数自身问题
-					if (tokens[i].back() != ')') {
-						cout << "\033[91menderIllegal.\033[0m" << endl;
-						errors.push_back(NULL);
-						errors.back() = new ScannerExceptions::ScannerTokenIllegalException(tokens[i]);
-					}
-
-
-
-					// 如果括号中间不是合法的标识符
-					if (!utils::isLegalIdentifier(tokens[i].substr(1, tokens[i].size() - 2))) {
-						errors.push_back(NULL);
-						errors.back() = new ScannerExceptions::ScannerIdentifierException(_LineNumber, currentTokenStartIndex, tokens[i].substr(1, tokens[i].size() - 2));
-					}
-
-				}
+				
 
 				// 否则就是标识符
 				else {
@@ -589,4 +553,4 @@ namespace checker {
 trecmake_end
 
 
-#endif // !SCANNER_H
+#endif // !CHECKERSCANNER_H

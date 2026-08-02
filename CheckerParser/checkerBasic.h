@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef CHECKERBASIC_H
+#define CHECKERBASIC_H
 
 #include <fstream>
 #include <string>
@@ -47,123 +47,106 @@ namespace checker {
 			return isLegalIdentifier(string(s));
 		}
 
-	}
+		// 判断是否是合法的字符串常量
+		bool isLegalStringLiteral(const string& s) {
+			if (s.size() < 2) return false;
+			if (s.front() != '"' || s.back() != '"') return false;
+			for (int i = 0;i < s.size();i++) {
+				char ch = s[i];
 
-	// 匹配器
-	namespace matcher { // 匹配器
+				if (ch == '\\') { // 如果将是一个转义符
+					// 所有的合法被转义字符
+					string legalEscapeChars = "\'\"\\bfnrtv";
 
-		class Matcher { // 匹配器基类
-		public:
-			virtual bool isLegal(const string&); // 判断匹配器是否合法
-			virtual bool isLegal(const char*&);
+					// 下一个（被转义的）字符是否合法
+					bool isIllegal = true;
 
-		};
+					// 匹配
+					for (const char& legalEscapeChar : legalEscapeChars) {
+						if (s[i + 1] == legalEscapeChar)isIllegal = false;
+					}
 
-		class StringMatcher : public Matcher { // 字符串匹配器
-		private:
-			string value; // 如果给的字符串等于这个字符串则匹配成功
+					if (isIllegal)return false;
 
-		public:
-			bool isLegal(const string& input) override { // 判断字符串匹配器是否合法
-				return input == value;
-			}
-			bool isLegal(const char*& input) override {
-				return string(input) == value;
-			}
-
-			void setValue(const string& val) { // 设置字符串匹配器的值
-				value = val;
-			};
-
-		};
-
-		class SpecialMatcher : public Matcher { // 特殊匹配器
-		private:
-			bool(*function)(const string&); // 如果给的字符串满足这个函数则匹配成功
-
-		public:
-			SpecialMatcher() : function(nullptr) {} // 默认构造函数)
-			SpecialMatcher(bool(*func)(const string&)) : function(func) {} // 构造函数
-
-			bool isLegal(const string& input) override { // 判断特殊匹配器是否合法
-				return function ? function(input) : false;
-			}
-			bool isLegal(const char*& input) override {
-				return function ? function(string(input)) : false;
-			}
-
-		};
-
-		namespace utils { // 工具函数
-
-			// 判断字符串是否为数字
-			bool isNumber(const string& input) {
-				for (char c : input) {
-					if (!isdigit(c)) return false;
 				}
-				return true;
-			}
 
-			// 判断字符串是否为标识符
-			bool isIdentifier(const string& input) {
-				if (input.empty() || !isalpha(input[0])) return false; // 标识符必须以字母开头
-				for (char c : input) {
-					if (!isalnum(c) && c != '_') return false; // 标识符只能包含字母、数字和下划线
+			} // end for
+
+			return true;
+
+		}
+
+		// 判断是否是合法的字符常量
+		bool isLegalCharLiteral(const string& s) {
+			if (s.size() > 4) return false; // 最多只能有4个字符：'\'', 'x', '\''
+			if (s.front() != '\'' || s.back() != '\'') return false;
+			if (s[1] == '\\') {
+				// 处理转义字符
+				string legalEscapeChars = "\'\"\\bfnrtv";
+				bool isIllegal = true;
+				for (const char& legalEscapeChar : legalEscapeChars) {
+					if (s[2] == legalEscapeChar) isIllegal = false;
 				}
-				return true;
+				if (isIllegal) return false;
+			}
+			else {
+				// 处理普通字符
+				if (s[1] == '\'') return false;
+			}
+			return true;
+		}
+
+		// 判断是否是合法的数字常量
+		bool isLegalNumberLiteral(const string& s) {
+			if (s.empty()) return false;
+
+			// 这整个数字常量的状态，即非十进制或浮点数
+			enum { hex, dec, oct, bin, _float }status = dec;
+
+			switch (s.back()) {
+			case 'h': status = hex; break;
+			case 'o': status = oct; break;
+			case 'b': status = bin; break;
+			case 'f': status = _float; break;
+
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9': break;
+
+			default: return false; // 不合法的结尾字符
 			}
 
-			// 判断字符串是否为字符串字面量
-			bool isStringLiteral(const string& input) {
-				return input.size() >= 2 && input.front() == '"' && input.back() == '"'; // 字符串字面量必须以双引号开头和结尾
+			for (int i = 0;i < (status == dec ? s.size() : s.size() - 1);i++) {
+				if (s[i] == '.')continue;
+				if (status == hex) {
+					if (!((s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'f') || (s[i] >= 'A' && s[i] <= 'F'))) return false;
+				}
+				else if (status == dec) {
+					if (!(s[i] >= '0' && s[i] <= '9')) return false;
+				}
+				else if (status == oct) {
+					if (!(s[i] >= '0' && s[i] <= '7')) return false;
+				}
+				else if (status == bin) {
+					if (!(s[i] == '0' || s[i] == '1')) return false;
+				}
+				else if (status == _float) {
+					if (!(s[i] >= '0' && s[i] <= '9')) return false;
+				}
+
 			}
 
+			return true;
 		}
 	}
 
-	// 语法树
-	namespace syntaxTree { // 语法树的节点定义以及函数
-
-		struct node { // 语法树节点
-			string value; // 节点的值
-			vector<node*> children; // 子节点
-			node(const string& val) : value(val) {} // 构造函数
-
-			void addChild(node* child) { // 添加子节点
-				children.push_back(child);
-			}
-
-			void print(int depth = 0) { // 打印语法树
-				for (int i = 0; i < depth; ++i) cout << "  "; // 缩进
-
-				cout << value << endl; // 打印当前节点的值
-
-				for (node* child : children) { // 递归打印子节点
-					child->print(depth + 1);
-				}
-			}
-
-			node* findChild(const string& val) { // 查找子节点
-				for (node* child : children) {
-					if (child->value == val) return child;
-				}
-				return nullptr; // 没有找到
-			}
-
-			node* operator[](const string& val) { // 重载[]运算符，查找子节点
-				return findChild(val);
-			}
-
-			node* operator[](int index) { // 重载[]运算符，按索引访问子节点
-				if (index < 0 || index >= children.size()) return nullptr; // 索引越界
-				return children[index];
-			}
-
-		};
-
-		node* root = nullptr; // 语法树的根节点
-
-	}
 
 }
 
@@ -172,28 +155,4 @@ trecmake_end
 #include "checkerScanner.h"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // !PARSER_H
+#endif // !CHECKERBASIC_H
