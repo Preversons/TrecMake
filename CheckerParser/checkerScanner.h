@@ -509,10 +509,24 @@ namespace checker {
 
 				// 读取到fileContents中
 				string s = "";
-				while (!_MyFile.eof()) {
-					getline(_MyFile, s);
+				while (getline(_MyFile, s)) {
+					// 检查是否全为空白字符
+					bool isBlank = true;
+					for (char ch : s) {
+						if (!isspace(static_cast<unsigned char>(ch))) {
+							isBlank = false;
+							break;
+						}
+					}
+					if (isBlank) {
+						continue;  // 跳过空行或全空格行
+					}
+
 					fileContents += s;
+					fileContents += '\n';
 				}
+
+				_MyFile.close();
 
 				lines = __formatting(fileContents);
 

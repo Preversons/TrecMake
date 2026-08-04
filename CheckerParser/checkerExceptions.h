@@ -243,6 +243,16 @@ namespace checker {
 				this->message = _message.str().c_str();
 			}
 		};
+
+		// 未知错误
+		class ScannerUnknownException : public ScannerProcessingException {
+		public:
+			ScannerUnknownException() {
+				string message = "\033[91mScannerUnknownException:\033[0m\n";
+				message += "\tAn unknown error occurred during scanning.";
+				this->message = message.c_str();
+			}
+		};
 	
 	}
 
@@ -351,6 +361,25 @@ namespace checker {
 
 			using ParserProcessingException::what;
 
+		};
+
+		// 未知异常
+		class ParserUnknownException : public ParserProcessingException {
+		private:
+			
+			// [内部] 创建错误信息
+			void __create(const string& msg) {
+				string _message = "";
+				_message+="\033[91mParserUnknownException:\033[0m\n";
+				_message += "\tAn unknown error occurred during parsing: " + msg;
+				this->message = _message.c_str();
+			}
+
+		public:
+			ParserUnknownException(const string& message) : ParserProcessingException(message) { __create(message); }
+			ParserUnknownException(const char* message) : ParserProcessingException(message) { __create(string(message)); }
+			ParserUnknownException(const ParserUnknownException& willCopy) : ParserProcessingException(willCopy) { __create(string(willCopy.what())); }
+			using ParserProcessingException::what;
 		};
 	}
 

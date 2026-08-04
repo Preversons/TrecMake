@@ -43,9 +43,6 @@ namespace checker {
 			}
 			return true;
 		}
-		bool isLegalIdentifier(const char* s) {
-			return isLegalIdentifier(string(s));
-		}
 
 		// 判断是否是合法的字符串常量
 		bool isLegalStringLiteral(const string& s) {

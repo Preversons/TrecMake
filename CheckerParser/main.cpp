@@ -24,22 +24,22 @@ int main(int argc, char* argv[]) {
 	enable_colors; // 开启颜色输出支持
 
 	// 配置文件的文件名
-	string configFilePath = "D:\\my folder\\TrecMake\\x64\\Debug\\syntax.txt";
+	string configFilePath = "D:\\my folder\\TrecMake\\x64\\Debug\\test1.txt";
 
 	Scanner input(configFilePath);
 
 	auto tokens = input.tokenize().results;
 	vector<ScannerExceptions::ScannerProcessingException*> errors = input.tokenize().errors;
 	
-	cout << "tokens = " << endl;
+	cout << "ScannerTokens = " << endl;
 	for (int i = 0;i < tokens.size();i++) {
 		for (int j = 0;j < tokens[i].size();j++) {
-			cout << setw(13) << left << (string("|") + tokens[i][j] + string("| "));
+			cout << setw(13) << left << tokens[i][j];
 		}
 		cout << endl;
 	}
 
-	cout << "errors = " << endl;
+	cout << "ScannerErrors = " << endl;
 	for (int i = 0;i < errors.size();i++) {
 		cout << (errors[i])->what() << endl << endl;
 	}
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 	auto result = parser.init();
 
 	auto parseErrors = result.errors;
-	cout << "errors = " << endl;
+	cout << "ParserErrors = " << endl;
 	for (int i = 0;i < parseErrors.size();i++) {
 		cout << (parseErrors[i])->what() << endl << endl;
 	}
