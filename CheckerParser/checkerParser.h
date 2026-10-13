@@ -33,6 +33,8 @@ namespace checker {
 		// token矩阵，一行为一个句，分为多个词
 		matrix<string> tokens;
 
+	public:
+
 		// 一个解析行节点
 		class parseLineNode {
 		private:
@@ -94,11 +96,12 @@ namespace checker {
 			//
 
 		};
-		
-	public: // debug public
 
 		// 解析行列表
 		using parseLineList = vector<parseLineNode>;
+
+		// 解析行列表的另一种别称：解析树，只不过是单棵树就对了
+		using parseTree = vector<parseLineNode>;
 		
 
 	public:

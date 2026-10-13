@@ -3,7 +3,7 @@
 
 #define trecmake_begin namespace trecmake {
 #define trecmake_end   }
-#define trecmake_ns    trecmake::
+#define TRC    ::trecmake::
 
 #define enable_colors \
 {                                                           \

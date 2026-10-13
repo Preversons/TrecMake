@@ -169,8 +169,6 @@ namespace checker {
 						i++;
 					}
 
-					cout << "Skipped The Index of: " << i << endl;
-
 					// 这个时候i在一个非空白字符上
 					// 为了防止跳过，应该再往前一个字符
 					i--;
@@ -313,6 +311,33 @@ namespace checker {
 					currentToken = "";
 					break; // end case ','
 
+				case '$': // 如果遇到'$'，则说明是一个特殊的token，直接读取后续的合法标识符并加入列表
+					// [提示] 此处将不再编写标识符报错提示
+					
+					// 先跳过当前 '$'
+					i++;
+
+
+					currentToken = "$";
+
+					// 不断向后读取
+					for (;utils::isLegalIdentifierChar(line[i]);i++) {
+						currentToken.push_back(line[i]);
+					}
+
+					tokens.push_back(currentToken);
+					currentToken = "";
+
+					// 有可能产生这样的情况：
+					// $starter-> ...
+					// 这样的话在上方的for循环最后会进行一次 i++ 的运算，所以会将i指向'-'，
+					// 如此一来再由遍历整个字符串的循环进行一次 i++ ，下一个循环将会看到i指向'>'，
+					// 这显然是不正确的
+					// 
+					// 因此手动一次 i--
+					i--;
+
+					break; // end case '$'
 				default:
 					if (currentToken.empty()) { // 当前是一个新的token，并且是标识符的开始
 						if (utils::isLegalIdentifierStartChar(line[i])) { // 如果当前字符是合法的标识符首字符，开始构建一个新的token
@@ -431,6 +456,13 @@ namespace checker {
 
 				// 否则就是标识符
 				else {
+
+					// 如果开头为'$'，为特殊标识符
+					if (tokens[i][0] == '$') {
+						cout << "\033[33m[Warning] Use special identifier starting with '$' with caution.(" << tokens[i] << ")\033[0m" << endl;
+						continue;
+					}
+
 					// 如果不是合法标识符
 					if (!utils::isLegalIdentifier(tokens[i])) {
 						errors.push_back(NULL);

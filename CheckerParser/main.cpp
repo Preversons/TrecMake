@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "checkerScanner.h"
 #include "checkerParser.h"
+#include "checkerComparer.h"
 #include "overloads.h"
 #include "macros.h"
 using namespace std;
@@ -53,6 +54,28 @@ int main(int argc, char* argv[]) {
 		cout << (parseErrors[i])->what() << endl << endl;
 	}
 
+	Comparator comparer;
+	comparer.setConfig(result.results);
+	const auto& compareResult = comparer.match({
+		"import",
+		"module",
+		".",
+		"function"
+		},
+
+		{
+			{ "function", [](const string& s) -> bool {
+						if (s == "aExampleFunctionName")return true;
+						else return false;
+						}}
+		}
+	);
+	cout << "CompareResult.isMatch = " << (compareResult.isMatch ? "true" : "false") << endl;
+	if (!compareResult.isMatch) {
+		for (const auto& errorPtr : compareResult.errors) {
+			cout << errorPtr->what() << endl << endl;
+		}
+	}
 	
 	system("pause");
 	return 0;
